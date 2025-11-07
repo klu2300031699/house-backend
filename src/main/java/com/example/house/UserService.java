@@ -4,6 +4,7 @@ package com.example.house;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -30,6 +31,7 @@ public class UserService {
             existing.setEmail(newUser.getEmail());
             existing.setPhone(newUser.getPhone());
             existing.setPassword(newUser.getPassword());
+            existing.setRole(newUser.getRole());
             return repository.save(existing);
         }
         return null;
@@ -37,6 +39,29 @@ public class UserService {
 
     public void deleteUser(Long id) {
         repository.deleteById(id);
+    }
+
+    // Register new user
+    public UserEntity registerUser(UserEntity user) {
+        // Check if user already exists
+        Optional<UserEntity> existingUser = repository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            return null; // Email already exists
+        }
+        // Set default role as "user" if not specified
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("user");
+        }
+        return repository.save(user);
+    }
+
+    // Login user
+    public UserEntity loginUser(String email, String password) {
+        Optional<UserEntity> user = repository.findByEmail(email);
+        if (user.isPresent() && user.get().getPassword().equals(password)) {
+            return user.get();
+        }
+        return null; // Invalid credentials
     }
 }
 

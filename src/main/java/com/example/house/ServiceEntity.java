@@ -2,6 +2,7 @@ package com.example.house;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "services")
@@ -25,6 +26,7 @@ public class ServiceEntity {
     private boolean featured;
 
     @ElementCollection
+    @JsonProperty("features")
     private List<String> includes;
 
     // Getters and Setters
